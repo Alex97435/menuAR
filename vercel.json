@@ -1,3 +1,12 @@
 {
-  "version": 2
+  "version": 2,
+  "buildCommand": "echo 'No build needed'",
+  "outputDirectory": ".",
+  "routes": [
+    { "src": "/", "dest": "/index.html" },
+    { "src": "/admin", "dest": "/admin.html" },
+    { "src": "/dashboard/(.*)", "dest": "/dashboard.html" },
+    { "src": "/menu/(.*)", "dest": "/menu.html" },
+    { "src": "/(.*)", "dest": "/$1" }
+  ]
 }
