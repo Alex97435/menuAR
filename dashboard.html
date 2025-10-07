@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - MenuAR</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0F172A;
+            --secondary: #64748B;
+            --accent: #3B82F6;
+            --accent-light: #DBEAFE;
+            --success: #10B981;
+            --bg: #FFFFFF;
+            --bg-alt: #F8FAFC;
+            --border: #E2E8F0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-alt);
+            color: var(--primary);
+        }
+
+        .header {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563EB;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--secondary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-outline:hover {
+            background: var(--bg-alt);
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-light);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .stat-trend {
+            color: var(--success);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: var(--secondary);
+            font-size: 0.9rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h2 {
+            font-size: 1.25rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .dishes-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .dishes-table th {
+            text-align: left;
+            padding: 1rem;
+            font-weight: 600;
+            color: var(--secondary);
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .dishes-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .dishes-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .dish-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .dish-thumb {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            background: var(--bg-alt);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .dish-details h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .dish-details p {
+            font-size: 0.85rem;
+            color: var(--secondary);
+        }
+
+        .badge {
+            padding: 0.4rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .btn-icon:hover {
+            background: var(--bg-alt);
+            border-color: var(--accent);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 2rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-header h2 {
+            font-size: 1.25rem;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .qr-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .qr-card {
+            text-align: center;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .qr-placeholder {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 1rem;
+            background: var(--bg-alt);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dishes-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1 id="restaurantName">Mon Restaurant</h1>
+            <div class="header-actions">
+                <button class="btn btn-outline" onclick="window.open(getMenuUrl(), '_blank')">
+                    Voir le menu
+                </button>
+                <button class="btn btn-primary" onclick="window.location.href='/admin'">
+                    Retour admin
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">👁️</div>
+                    <div class="stat-trend">+23%</div>
+                </div>
+                <div class="stat-value" id="totalViews">2,547</div>
+                <div class="stat-label">Vues AR ce mois</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">🛒</div>
+                    <div class="stat-trend">+18%</div>
+                </div>
+                <div class="stat-value" id="totalOrders">387</div>
+                <div class="stat-label">Commandes générées</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-trend">+31%</div>
+                </div>
+                <div class="stat-value">6,842€</div>
+                <div class="stat-label">CA additionnel</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">📱</div>
+                    <div class="stat-trend">+15%</div>
+                </div>
+                <div class="stat-value" id="totalScans">1,834</div>
+                <div class="stat-label">Scans QR Code</div>
+            </div>
+        </div>
+
+        <!-- Dishes Card -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Mes plats (<span id="dishesCount">0</span>)</h2>
+                <button class="btn btn-primary" onclick="openAddDishModal()">+ Ajouter un plat</button>
+            </div>
+            <div class="card-body">
+                <div id="dishesList"></div>
+            </div>
+        </div>
+
+        <!-- QR Codes Card -->
+        <div class="card">
+            <div class="card-header">
+                <h2>QR Codes</h2>
+            </div>
+            <div class="card-body">
+                <div class="qr-section">
+                    <div class="qr-card">
+                        <div class="qr-placeholder">📱</div>
+                        <h3 style="margin-bottom: 0.5rem; font-size: 1rem;">Menu complet</h3>
+                        <p style="color: var(--secondary); font-size: 0.85rem; margin-bottom: 1rem;">Pour vos tables</p>
+                        <button class="btn btn-outline" onclick="downloadQR()">Télécharger</button>
+                    </div>
+                    <div class="qr-card">
+                        <div class="qr-placeholder">🪟</div>
+                        <h3 style="margin-bottom: 0.5rem; font-size: 1rem;">Vitrine</h3>
+                        <p style="color: var(--secondary); font-size: 0.85rem; margin-bottom: 1rem;">Pour l'extérieur</p>
+                        <button class="btn btn-outline" onclick="downloadQR()">Télécharger</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Dish Modal -->
+    <div id="addDishModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nouveau plat</h2>
+            </div>
+            <form id="addDishForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Nom du plat *</label>
+                        <input type="text" id="dishName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="dishDescription"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Prix (€) *</label>
+                        <input type="number" step="0.01" id="dishPrice" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Catégorie</label>
+                        <select id="dishCategory">
+                            <option value="entrees">Entrées</option>
+                            <option value="plats">Plats</option>
+                            <option value="desserts">Desserts</option>
+                            <option value="boissons">Boissons</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" onclick="closeAddDishModal()">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Ajouter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let restaurantId = null;
+        let restaurant = null;
+        let dishes = [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            restaurantId = getRestaurantIdFromUrl();
+            loadRestaurantData();
+            loadDishes();
+        });
+
+        function getRestaurantIdFromUrl() {
+            const path = window.location.pathname;
+            const match = path.match(/\/dashboard\/(.+)/);
+            return match ? match[1] : 'demo';
+        }
+
+        function loadRestaurantData() {
+            const restaurants = JSON.parse(localStorage.getItem('menuar_restaurants') || '[]');
+            restaurant = restaurants.find(r => r.id === restaurantId);
+            
+            if (restaurant) {
+                document.getElementById('restaurantName').textContent = restaurant.name;
+            }
+        }
+
+        function loadDishes() {
+            const storedDishes = localStorage.getItem(`menuar_dishes_${restaurantId}`);
+            dishes = storedDishes ? JSON.parse(storedDishes) : getDemoDishes();
+            renderDishes();
+        }
+
+        function getDemoDishes() {
+            return [
+                { id: '1', name: 'Burger Gourmet', description: 'Viande de bœuf, cheddar, bacon', price: 18.90, category: 'plats', icon: '🍔' },
+                { id: '2', name: 'Pasta Carbonara', description: 'Pâtes fraîches, guanciale', price: 16.50, category: 'plats', icon: '🍝' },
+                { id: '3', name: 'Pavé de Saumon', description: 'Saumon norvégien, risotto', price: 24.90, category: 'plats', icon: '🐟' },
+                { id: '4', name: 'Caesar Salad', description: 'Laitue, poulet, parmesan', price: 14.50, category: 'entrees', icon: '🥗' },
+                { id: '5', name: 'Tiramisu', description: 'Mascarpone, café italien', price: 8.50, category: 'desserts', icon: '🍰' }
+            ];
+        }
+
+        function renderDishes() {
+            const container = document.getElementById('dishesList');
+            document.getElementById('dishesCount').textContent = dishes.length;
+
+            if (dishes.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🍽️</div>
+                        <p>Aucun plat ajouté</p>
+                        <p style="font-size: 0.9rem; margin-top: 0.5rem;">Commencez par ajouter votre premier plat</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <table class="dishes-table">
+                    <thead>
+                        <tr>
+                            <th>Plat</th>
+                            <th>Prix</th>
+                            <th>Catégorie</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${dishes.map(dish => `
+                            <tr>
+                                <td>
+                                    <div class="dish-info">
+                                        <div class="dish-thumb">${dish.icon || '🍽️'}</div>
+                                        <div class="dish-details">
+                                            <h3>${dish.name}</h3>
+                                            <p>${dish.description || ''}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><strong>${dish.price}€</strong></td>
+                                <td>${getCategoryLabel(dish.category)}</td>
+                                <td><span class="badge badge-success">Actif</span></td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="btn-icon" onclick="editDish('${dish.id}')" title="Modifier">✏️</button>
+                                        <button class="btn-icon" onclick="deleteDish('${dish.id}')" title="Supprimer">🗑️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function getCategoryLabel(category) {
+            const labels = {
+                entrees: 'Entrées',
+                plats: 'Plats',
+                desserts: 'Desserts',
+                boissons: 'Boissons'
+            };
+            return labels[category] || category;
+        }
+
+        // Modal
+        function openAddDishModal() {
+            document.getElementById('addDishModal').classList.add('active');
+        }
+
+        function closeAddDishModal() {
+            document.getElementById('addDishModal').classList.remove('active');
+            document.getElementById('addDishForm').reset();
+        }
+
+        document.getElementById('addDishForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const newDish = {
+                id: Date.now().toString(),
+                name: document.getElementById('dishName').value,
+                description: document.getElementById('dishDescription').value,
+                price: parseFloat(document.getElementById('dishPrice').value),
+                category: document.getElementById('dishCategory').value,
+                icon: getRandomIcon()
+            };
+
+            dishes.push(newDish);
+            saveDishes();
+            renderDishes();
+            closeAddDishModal();
+        });
+
+        function getRandomIcon() {
+            const icons = ['🍔', '🍝', '🍕', '🥗', '🐟', '🥩', '🍰', '🍜', '🌮', '🍱'];
+            return icons[Math.floor(Math.random() * icons.length)];
+        }
+
+        function saveDishes() {
+            localStorage.setItem(`menuar_dishes_${restaurantId}`, JSON.stringify(dishes));
+        }
+
+        function editDish(id) {
+            alert('Fonction en développement');
+        }
+
+        function deleteDish(id) {
+            if (confirm('Supprimer ce plat ?')) {
+                dishes = dishes.filter(d => d.id !== id);
+                saveDishes();
+                renderDishes();
+            }
+        }
+
+        function getMenuUrl() {
+            return `/menu/${restaurantId}`;
+        }
+
+        function downloadQR() {
+            const url = `${window.location.origin}/menu/${restaurantId}`;
+            alert(`Lien menu: ${url}\n\nUtilisez un générateur de QR code avec ce lien.`);
+        }
+
+        // Close modal on outside click
+        document.getElementById('addDishModal').addEventListener('click', (e) => {
+            if (e.target.id === 'addDishModal') {
+                closeAddDishModal();
+            }
+        });
+    </script>
+</body>
+</html>

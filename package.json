@@ -1,0 +1,24 @@
+{
+  "name": "menuar-pro",
+  "version": "1.0.0",
+  "description": "Application de réalité augmentée pour restaurants - Visualisez vos plats en 3D",
+  "main": "public/index.html",
+  "scripts": {
+    "dev": "npx serve public",
+    "build": "echo 'Static site - no build needed'",
+    "deploy": "vercel --prod"
+  },
+  "keywords": [
+    "ar",
+    "augmented-reality",
+    "restaurant",
+    "menu",
+    "3d",
+    "webxr"
+  ],
+  "author": "Alexandre Beton <alexandrebeton@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "serve": "^14.2.1"
+  }
+}

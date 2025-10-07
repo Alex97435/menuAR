@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu AR - MenuAR</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0F172A;
+            --secondary: #64748B;
+            --accent: #3B82F6;
+            --accent-light: #DBEAFE;
+            --bg: #FFFFFF;
+            --bg-alt: #F8FAFC;
+            --border: #E2E8F0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-alt);
+            color: var(--primary);
+            padding-bottom: 2rem;
+        }
+
+        .header {
+            background: white;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: var(--secondary);
+            font-size: 0.95rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .categories {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .category-btn {
+            padding: 0.625rem 1.25rem;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        .category-btn:hover {
+            border-color: var(--accent);
+        }
+
+        .category-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .dishes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .dish-card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .dish-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            border-color: var(--accent);
+        }
+
+        .dish-image {
+            height: 200px;
+            background: linear-gradient(135deg, var(--bg-alt) 0%, #E2E8F0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            position: relative;
+        }
+
+        .ar-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--accent);
+            color: white;
+            padding: 0.4rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dish-content {
+            padding: 1.5rem;
+        }
+
+        .dish-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .dish-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .dish-price {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .dish-description {
+            color: var(--secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .dish-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dish-category {
+            font-size: 0.85rem;
+            color: var(--secondary);
+        }
+
+        .btn-ar {
+            padding: 0.625rem 1.25rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .btn-ar:hover {
+            background: #2563EB;
+            transform: translateY(-1px);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .btn-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: var(--bg-alt);
+            cursor: pointer;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .btn-close:hover {
+            background: var(--border);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        model-viewer {
+            width: 100%;
+            height: 500px;
+            background: var(--bg-alt);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .dish-details {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .detail-section {
+            padding: 1rem;
+            background: var(--bg-alt);
+            border-radius: 8px;
+        }
+
+        .detail-section h3 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+        }
+
+        .detail-section p {
+            color: var(--secondary);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .ar-info {
+            background: var(--accent-light);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .ar-info h3 {
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .ar-info ol {
+            margin-left: 1.25rem;
+            color: var(--secondary);
+            font-size: 0.9rem;
+        }
+
+        .ar-info li {
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .dishes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            model-viewer {
+                height: 350px;
+            }
+
+            .categories {
+                flex-wrap: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1 id="restaurantName">Mon Restaurant</h1>
+            <p id="restaurantInfo">Découvrez notre menu en réalité augmentée</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="categories">
+            <button class="category-btn active" onclick="filterCategory('all')">Tous</button>
+            <button class="category-btn" onclick="filterCategory('entrees')">Entrées</button>
+            <button class="category-btn" onclick="filterCategory('plats')">Plats</button>
+            <button class="category-btn" onclick="filterCategory('desserts')">Desserts</button>
+            <button class="category-btn" onclick="filterCategory('boissons')">Boissons</button>
+        </div>
+
+        <div id="dishesList" class="dishes-grid"></div>
+    </div>
+
+    <!-- AR Modal -->
+    <div id="arModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalDishName">Plat</h2>
+                <button class="btn-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <model-viewer
+                    id="modelViewer"
+                    ar
+                    ar-modes="webxr scene-viewer quick-look"
+                    camera-controls
+                    touch-action="pan-y"
+                    shadow-intensity="1"
+                    exposure="1"
+                    camera-orbit="45deg 75deg 2.5m"
+                    style="background: radial-gradient(circle, #F8FAFC 0%, #E2E8F0 100%);">
+                    
+                    <button slot="ar-button" class="btn-ar" style="position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); padding: 1rem 2rem; font-size: 1rem;">
+                        📱 Voir en AR sur ma table
+                    </button>
+                    
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none;">
+                        <div style="font-size: 4rem; margin-bottom: 1rem;">🍽️</div>
+                        <p style="color: var(--secondary); font-size: 1.1rem;">Vue 3D interactive</p>
+                        <p style="color: var(--secondary); font-size: 0.9rem; margin-top: 0.5rem;">Faites glisser pour pivoter</p>
+                    </div>
+                </model-viewer>
+
+                <div id="dishDetailsContent" class="dish-details"></div>
+
+                <div class="ar-info">
+                    <h3>Comment utiliser la réalité augmentée ?</h3>
+                    <ol>
+                        <li>Cliquez sur le bouton "Voir en AR sur ma table"</li>
+                        <li>Pointez votre smartphone vers une surface plane</li>
+                        <li>Le plat apparaîtra en taille réelle</li>
+                        <li>Déplacez-vous autour pour voir tous les angles</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let restaurantId = null;
+        let dishes = [];
+        let currentCategory = 'all';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            restaurantId = getRestaurantIdFromUrl();
+            loadRestaurantData();
+            loadDishes();
+        });
+
+        function getRestaurantIdFromUrl() {
+            const path = window.location.pathname;
+            const match = path.match(/\/menu\/(.+)/);
+            return match ? match[1] : 'demo';
+        }
+
+        function loadRestaurantData() {
+            const restaurants = JSON.parse(localStorage.getItem('menuar_restaurants') || '[]');
+            const restaurant = restaurants.find(r => r.id === restaurantId);
+            
+            if (restaurant) {
+                document.getElementById('restaurantName').textContent = restaurant.name;
+                document.getElementById('restaurantInfo').textContent = restaurant.description || 'Découvrez notre menu en réalité augmentée';
+            }
+        }
+
+        function loadDishes() {
+            const storedDishes = localStorage.getItem(`menuar_dishes_${restaurantId}`);
+            dishes = storedDishes ? JSON.parse(storedDishes) : getDemoDishes();
+            renderDishes();
+        }
+
+        function getDemoDishes() {
+            return [
+                { 
+                    id: '1', 
+                    name: 'Burger Gourmet', 
+                    description: 'Viande de bœuf français, cheddar affiné, bacon croustillant, sauce maison', 
+                    price: 18.90, 
+                    category: 'plats', 
+                    icon: '🍔',
+                    ingredients: 'Viande de bœuf (180g), pain brioché, cheddar, bacon, salade, tomate',
+                    allergens: 'Gluten, Lactose, Œufs'
+                },
+                { 
+                    id: '2', 
+                    name: 'Pasta Carbonara', 
+                    description: 'Pâtes fraîches maison, guanciale, œufs bio, parmesan 24 mois', 
+                    price: 16.50, 
+                    category: 'plats', 
+                    icon: '🍝',
+                    ingredients: 'Pâtes fraîches (200g), guanciale, œufs bio, parmesan DOP',
+                    allergens: 'Gluten, Œufs, Lactose'
+                },
+                { 
+                    id: '3', 
+                    name: 'Pavé de Saumon', 
+                    description: 'Saumon sauvage de Norvège, risotto crémeux, légumes de saison', 
+                    price: 24.90, 
+                    category: 'plats', 
+                    icon: '🐟',
+                    ingredients: 'Saumon norvégien (200g), risotto aux asperges, sauce hollandaise',
+                    allergens: 'Poisson, Lactose'
+                },
+                { 
+                    id: '4', 
+                    name: 'Entrecôte Angus', 
+                    description: 'Viande premium maturée 21 jours, frites maison, sauce au poivre', 
+                    price: 32.00, 
+                    category: 'plats', 
+                    icon: '🥩',
+                    ingredients: 'Bœuf Angus (300g), frites maison, sauce poivre vert',
+                    allergens: 'Lactose'
+                },
+                { 
+                    id: '5', 
+                    name: 'Caesar Salad', 
+                    description: 'Laitue romaine, poulet grillé, croûtons maison, sauce caesar', 
+                    price: 14.50, 
+                    category: 'entrees', 
+                    icon: '🥗',
+                    ingredients: 'Laitue romaine, poulet (120g), parmesan, croûtons',
+                    allergens: 'Gluten, Œufs, Lactose'
+                },
+                { 
+                    id: '6', 
+                    name: 'Tiramisu Maison', 
+                    description: 'Biscuits imbibés de café, crème mascarpone, cacao pur', 
+                    price: 8.50, 
+                    category: 'desserts', 
+                    icon: '🍰',
+                    ingredients: 'Mascarpone, biscuits Savoiardi, café, cacao',
+                    allergens: 'Gluten, Œufs, Lactose'
+                }
+            ];
+        }
+
+        function renderDishes() {
+            const container = document.getElementById('dishesList');
+            const filtered = currentCategory === 'all' 
+                ? dishes 
+                : dishes.filter(d => d.category === currentCategory);
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <div class="empty-state-icon">🍽️</div>
+                        <p>Aucun plat dans cette catégorie</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtered.map(dish => `
+                <div class="dish-card" onclick="openARViewer('${dish.id}')">
+                    <div class="dish-image">
+                        <span>${dish.icon || '🍽️'}</span>
+                        <div class="ar-badge">
+                            📱 AR
+                        </div>
+                    </div>
+                    <div class="dish-content">
+                        <div class="dish-header">
+                            <div class="dish-name">${dish.name}</div>
+                            <div class="dish-price">${dish.price.toFixed(2)}€</div>
+                        </div>
+                        <div class="dish-description">${dish.description || ''}</div>
+                        <div class="dish-footer">
+                            <div class="dish-category">${getCategoryLabel(dish.category)}</div>
+                            <button class="btn-ar" onclick="event.stopPropagation(); openARViewer('${dish.id}')">
+                                Voir en AR
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getCategoryLabel(category) {
+            const labels = {
+                entrees: 'Entrées',
+                plats: 'Plats',
+                desserts: 'Desserts',
+                boissons: 'Boissons'
+            };
+            return labels[category] || category;
+        }
+
+        function filterCategory(category) {
+            currentCategory = category;
+            
+            // Update active button
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            renderDishes();
+        }
+
+        function openARViewer(dishId) {
+            const dish = dishes.find(d => d.id === dishId);
+            if (!dish) return;
+
+            document.getElementById('modalDishName').textContent = dish.name;
+            
+            // Details
+            document.getElementById('dishDetailsContent').innerHTML = `
+                <div class="detail-section">
+                    <h3>Description</h3>
+                    <p>${dish.description || 'Aucune description disponible'}</p>
+                </div>
+                <div class="detail-section">
+                    <h3>Ingrédients</h3>
+                    <p>${dish.ingredients || 'Non renseigné'}</p>
+                </div>
+                <div class="detail-section">
+                    <h3>Allergènes</h3>
+                    <p>${dish.allergens || 'Non renseigné'}</p>
+                </div>
+                <div class="detail-section">
+                    <h3>Prix</h3>
+                    <p style="font-size: 1.5rem; font-weight: 700; color: var(--accent);">${dish.price.toFixed(2)}€</p>
+                </div>
+            `;
+
+            document.getElementById('arModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('arModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal on ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Close modal on outside click
+        document.getElementById('arModal').addEventListener('click', (e) => {
+            if (e.target.id === 'arModal') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
